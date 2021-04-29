@@ -5,7 +5,6 @@ import { DynamoDB } from "aws-sdk";
 const dynamoDb = new DynamoDB.DocumentClient();
 
 module.exports.create = async (event, context) => {
-  const timestamp = new Date().getTime();
   const data = JSON.parse(event.body);
   //  lembrar de adicionar validação
 
@@ -13,16 +12,12 @@ module.exports.create = async (event, context) => {
     TableName: process.env.DYNAMODB_TABLE,
     Item: {
       id: uuid(),
-      fistName: "Leonard",
-      lastName: "Alexandre",
-      birthday: "2016-08-29T09:12:33.001Z",
-      gender: "feminine OR masculine",
-      height: 1.5,
-      weight: 1.5,
-      acceptedTerms: true,
-      status: "activated OR disabled",
-      personalAssociated: "d290f2ee-6c54-4b01-90e6-d701748f0851",
-      createdAt: "2016-08-29T09:12:33.001Z",
+      firstName: data.firstName,
+      lastName: data.lastName,
+      birthday: data.birthday,
+      gender: data.gender,
+      email: data.email,
+      password: data.password
     },
   };
 
@@ -31,7 +26,7 @@ module.exports.create = async (event, context) => {
     // handle potential errors
     if (error) {
       console.error(error);
-      return new Error("Couldn't create the todo item.");
+      return new Error("Couldn't create the gym goer item.");
     }
 
     // create a response
