@@ -5,35 +5,28 @@ import { DynamoDB } from "aws-sdk";
 const dynamoDb = new DynamoDB.DocumentClient();
 
 module.exports.create = async (event, context) => {
-  const data = JSON.parse(event.body);
-  //  lembrar de adicionar validação
+  try {
+    const data = JSON.parse(event.body);
+    //  adicionar validação
+    //  adicionar hash na senha
 
-  const params = {
-    TableName: process.env.DYNAMODB_TABLE,
-    Item: {
-      id: uuid(),
-      firstName: data.firstName,
-      lastName: data.lastName,
-      birthday: data.birthday,
-      gender: data.gender,
-      email: data.email,
-      password: data.password
-    },
-  };
-
-  // write the todo to the database
-  dynamoDb.put(params, (error, result) => {
-    // handle potential errors
-    if (error) {
-      console.error(error);
-      return new Error("Couldn't create the gym goer item.");
-    }
-
-    // create a response
-    const response = {
-      statusCode: 200,
-      body: JSON.stringify(params.Item),
+    const params = {
+      TableName: process.env.GYM_GOER,
+      Item: {
+        id: uuid(),
+        firstName: data.firstName,
+        lastName: data.lastName,
+        birthday: data.birthday,
+        gender: data.gender,
+        email: data.email,
+        password: data.password
+      },
     };
-    return response;
-  });
+
+    await dynamoDb.put(params).promise();
+
+    return params.Item;
+  } catch (error) {
+    return error
+  }
 };
