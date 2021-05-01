@@ -6,8 +6,8 @@ import personal from './src/modules/personal'
 import session from './src/modules/session'
 
 // importação dos schemas
-import { GymGoerDynamoDBTable } from './src/database/dynamodb_tables/GymGoerDynamoDBTable';
-import { PersonalDynamoDBTable } from './src/database/dynamodb_tables/PersonalDynamoDBTable';
+import { GymGoerEnvironment, GymGoerResource, GymGoerStatement } from './src/database/dynamodb_tables/GymGoer';
+import { PersonalTrainerEnvironment, PersonalTrainerResource, PersonalTrainerStatement } from './src/database/dynamodb_tables/PersonalTrainer';
 
 export const service: Serverless = {
   service: "gym-connect",
@@ -18,38 +18,14 @@ export const service: Serverless = {
     runtime: "nodejs12.x",
     region: "eu-west-2",
     environment: {
-      GYM_GOER: "gym_goer-${opt:stage, self:provider.stage}",
-      PERSONAL: "personal-${opt:stage, self:provider.stage}",
+      GYMGOER: GymGoerEnvironment,
+      PERSONALTRAINER: PersonalTrainerEnvironment,
     },
     iam: {
       role: {
         statements: [
-          {
-            Effect: "Allow",
-            Action: [
-              "dynamodb:Query",
-              "dynamodb:Scan",
-              "dynamodb:GetItem",
-              "dynamodb:PutItem",
-              "dynamodb:UpdateItem",
-              "dynamodb:DeleteItem",
-            ],
-            Resource:
-              "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.GYM_GOER}",
-          },
-          {
-            Effect: "Allow",
-            Action: [
-              "dynamodb:Query",
-              "dynamodb:Scan",
-              "dynamodb:GetItem",
-              "dynamodb:PutItem",
-              "dynamodb:UpdateItem",
-              "dynamodb:DeleteItem",
-            ],
-            Resource:
-              "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.PERSONAL}",
-          },
+          GymGoerStatement,
+          PersonalTrainerStatement,
         ],
       },
     },
@@ -75,8 +51,8 @@ export const service: Serverless = {
   },
   resources: {
     Resources: {
-      GymGoerDynamoDBTable,
-      PersonalDynamoDBTable,
+      GymGoerResource,
+      PersonalTrainerResource,
     }
   }
 }

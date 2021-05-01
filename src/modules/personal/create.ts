@@ -37,7 +37,7 @@ export const handler: APIGatewayProxyHandler = async (
     const hashedPassword = await bcrypt.hash(data.password, salt);
 
     const params = {
-      TableName: process.env.PERSONAL,
+      TableName: process.env.PERSONALTRAINER,
       Item: {
         id: uuid(),
         firstName: data.firstName,
@@ -87,7 +87,7 @@ async function validate(data) {
   data = JSON.parse(data);
 
   const params: DynamoDB.DocumentClient.ScanInput = {
-    TableName: process.env.PERSONAL,
+    TableName: process.env.PERSONALTRAINER,
     FilterExpression: "#email = :email",
     ExpressionAttributeNames: {
       "#email": "email",

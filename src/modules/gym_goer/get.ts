@@ -3,7 +3,7 @@ import { APIGatewayProxyHandler } from "aws-lambda";
 
 import dynamoDb from '../../database'
 
-import { verify } from '../../middlewares/auth_middleware';
+import { verifyAll } from '../../middlewares/auth_middleware';
 
 export const handler: APIGatewayProxyHandler = async (
   event,
@@ -11,10 +11,10 @@ export const handler: APIGatewayProxyHandler = async (
   callback
 ) => {
   try {
-    await verify(event);
+    await verifyAll(event);
 
     const params: DynamoDB.DocumentClient.ScanInput = {
-      TableName: process.env.GYM_GOER,
+      TableName: process.env.GYMGOER,
       AttributesToGet: [
         "id",
         "email",
@@ -45,8 +45,8 @@ export const handler: APIGatewayProxyHandler = async (
     callback(null, {
       statusCode: error.statusCode || 500,
       body: error.body || JSON.stringify({
-        error: "Internal server error",
         message: error.message,
+        error: "Internal server error",
       }),
     });
     return error;

@@ -14,7 +14,7 @@ export const handler: APIGatewayProxyHandler = async (
     await verify(event);
 
     const params: DynamoDB.DocumentClient.ScanInput = {
-      TableName: process.env.PERSONAL,
+      TableName: process.env.PERSONALTRAINER,
       AttributesToGet: [
         "id",
         "fistName",

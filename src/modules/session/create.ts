@@ -26,8 +26,10 @@ export const handler: APIGatewayProxyHandler = async (
     const data = JSON.parse(event.body);
     if (!data || !data.password || !data.email) return callback(null, error);
 
+    const table = data.personal ? process.env.PERSONALTRAINER :process.env.GYMGOER;
+
     const params: DynamoDB.DocumentClient.ScanInput = {
-      TableName: process.env.GYM_GOER,
+      TableName: table,
       FilterExpression: "#email = :email",
       ExpressionAttributeNames: {
         "#email": "email",
@@ -38,22 +40,24 @@ export const handler: APIGatewayProxyHandler = async (
     };
 
     const result = await dynamoDb.scan(params).promise();
-    const [gymgoer] = result.Items
+    const [user] = result.Items
 
-    if (!gymgoer) return callback(null, error)
+    if (!user) return callback(null, error)
 
-    const validPassword = await bcrypt.compare(data.password, gymgoer.password);
+    const validPassword = await bcrypt.compare(data.password, user.password);
 
     if (!validPassword) return callback(null, error);
 
-    const token = jwt.sign({ email: gymgoer.email }, process.env.SECRET, { expiresIn: '1 day' })
+    // verifica qual chave privada usar
+    const secret = data.personal ? process.env.SECRET_PERSONAL : process.env.SECRET;
+    const token = jwt.sign({ email: user.email }, secret, { expiresIn: '1 day' })
 
     callback(null, {
       statusCode: 200,
       body: JSON.stringify({
-        type: 'GymGoer',
+        // type: 'GymGoer or Personal',
         token,
-        gymGoer: gymgoer
+        user: user
       })
     })
     return;
