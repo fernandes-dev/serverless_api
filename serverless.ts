@@ -8,6 +8,7 @@ import session from './src/modules/session'
 // importação dos schemas
 import { GymGoerEnvironment, GymGoerResource, GymGoerStatement } from './src/database/dynamodb_tables/GymGoer';
 import { PersonalTrainerEnvironment, PersonalTrainerResource, PersonalTrainerStatement } from './src/database/dynamodb_tables/PersonalTrainer';
+import { InvitationEnvironment, InvitationResource, InvitationStatement } from './src/database/dynamodb_tables/Invitation';
 
 export const service: Serverless = {
   service: "gym-connect",
@@ -20,12 +21,14 @@ export const service: Serverless = {
     environment: {
       GYMGOER: GymGoerEnvironment,
       PERSONALTRAINER: PersonalTrainerEnvironment,
+      INVITATION: InvitationEnvironment,
     },
     iam: {
       role: {
         statements: [
           GymGoerStatement,
           PersonalTrainerStatement,
+          InvitationStatement
         ],
       },
     },
@@ -53,6 +56,7 @@ export const service: Serverless = {
     Resources: {
       GymGoerResource,
       PersonalTrainerResource,
+      InvitationResource
     }
   }
 }

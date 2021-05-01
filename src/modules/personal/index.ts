@@ -22,6 +22,28 @@ const functions = {
       },
     ],
   },
+  send_invitation: {
+    handler: "src/modules/personal/invitation/create.handler",
+    events: [
+      {
+        http: {
+          path: "invite",
+          method: "post",
+        },
+      },
+    ],
+  },
+  get_invitations: {
+    handler: "src/modules/personal/invitation/get.handler",
+    events: [
+      {
+        http: {
+          path: "invite",
+          method: "get",
+        },
+      },
+    ],
+  },
 }
 
 export default functions;

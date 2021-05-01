@@ -29,6 +29,18 @@ export const handler: APIGatewayProxyHandler = async (
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(data.password, salt);
 
+    const { personalAssociated } = await alreadyInvited(data);
+
+    if (!personalAssociated) {
+      callback(null, {
+        statusCode: 401,
+        body: JSON.stringify({
+          message: 'User not invited'
+        })
+      })
+      return
+    }
+
     const params = {
       TableName: process.env.GYMGOER,
       Item: {
@@ -39,6 +51,7 @@ export const handler: APIGatewayProxyHandler = async (
         gender: data.gender,
         email: data.email,
         password: hashedPassword,
+        personalAssociated,
         createdAt: new Date().toISOString()
       },
     };
@@ -91,4 +104,22 @@ async function validate(data) {
   Object.keys(data).forEach((key) => {
     if (!data[key]) throw new Error(error);
   });
+}
+
+async function alreadyInvited(data: { email: string }): Promise<{ personalAssociated: string }> {
+  const paramsInvitation: DynamoDB.DocumentClient.ScanInput = {
+    TableName: process.env.INVITATION,
+    FilterExpression: "#email = :email",
+    ExpressionAttributeNames: {
+      "#email": "email",
+    },
+    ExpressionAttributeValues: {
+      ":email": data.email
+    }
+  };
+
+  const result = await dynamoDb.scan(paramsInvitation).promise();
+
+  if (result.Count > 0) return { personalAssociated: result.Items[0].personalId };
+  return { personalAssociated: null };
 }
