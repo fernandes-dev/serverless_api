@@ -19,7 +19,6 @@ export const handler: APIGatewayProxyHandler = async (
   try {
     const { email } = await verify(event, process.env.SECRET_PERSONAL);
 
-    // obtém dados do personal para referenciar no convite
     const { user } = await getByEmail({
       email,
       table: process.env.PERSONALTRAINER,
@@ -30,9 +29,7 @@ export const handler: APIGatewayProxyHandler = async (
     
     const data: Request = JSON.parse(requestData);
     
-    // verifica se o email está disponível
     await validate(requestData);
-    console.log('opa');
 
     const invitationId = uuid();
     const params = {

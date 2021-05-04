@@ -11,13 +11,13 @@ export const handler: APIGatewayProxyHandler = async (
   callback
 ) => {
   try {
-    await verify(event);
+    await verify(event, process.env.SECRET_PERSONAL);
 
     const params: DynamoDB.DocumentClient.ScanInput = {
       TableName: process.env.PERSONALTRAINER,
       AttributesToGet: [
         "id",
-        "fistName",
+        "firstName",
         "lastName",
         "birthday",
         "gender",

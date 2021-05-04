@@ -11,6 +11,18 @@ const functions = {
       },
     ],
   },
+  update_personal: {
+    handler: "src/modules/personal/update.handler",
+    events: [
+      {
+        http: {
+          path: "personal/profile",
+          method: "put",
+          cors: true,
+        },
+      },
+    ],
+  },
   get_personal: {
     handler: "src/modules/personal/get.handler",
     events: [
