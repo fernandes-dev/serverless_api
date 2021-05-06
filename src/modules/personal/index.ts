@@ -1,4 +1,6 @@
-const functions = {
+import Aws = require("serverless/aws");
+
+const functions: Aws.Functions = {
   create_personal: {
     handler: "src/modules/personal/create.handler",
     events: [
